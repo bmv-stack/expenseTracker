@@ -3,11 +3,15 @@ import { useContext, useLayoutEffect } from "react";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles/GlobalStyles";
 import Button from "../components/UI/Button";
-import { ExpensesContext } from "../store/context/ExpensesContext";
+//import { ExpensesContext } from "../store/context/ExpensesContext";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteExpense, addExpense, updateExpense } from "../store/redux/expense-slice";
 
 const ManageExpenseScreen = ({ route, navigation }) => {
-    const expensesCtx = useContext(ExpensesContext);
+    const dispatch = useDispatch();
+    //const expensesCtx = useContext(ExpensesContext);
     const editExpenseId = route.params?.expenseId;
+    console.log('Route params:', route.params)
     const isEditing = !!editExpenseId;
 
     useLayoutEffect(() => {
@@ -17,7 +21,7 @@ const ManageExpenseScreen = ({ route, navigation }) => {
     }, [navigation, isEditing]);
 
     function deleteExpenseHandler() {
-        expensesCtx.deleteExpense(editExpenseId);
+        dispatch(deleteExpense(editExpenseId))
         navigation.goBack();
     }
     function cancelHandler() {
@@ -25,17 +29,20 @@ const ManageExpenseScreen = ({ route, navigation }) => {
     }
     function confirmHandler() {
         if (isEditing) {
-            expensesCtx.updateExpense(editExpenseId, {
-                description: "Test!!!",
-                amount: 99.99,
-                date: new Date("2022-05-08"),
-            });
+            dispatch(updateExpense({
+                id: editExpenseId,
+                data: {
+                    description: "Updated with Redux!",
+                    amount: 99.99,
+                    date: new Date("2022-05-08").toString(),
+                }
+            }))
         } else {
-            expensesCtx.addExpense({
-                description: "Test!!",
+            dispatch(addExpense({
+                description: 'Added with Redux',
                 amount: 19.99,
-                date: new Date("2022-08-05"),
-            });
+                date: new Date("2022-08-05").toString(),
+            }))
         }
         navigation.goBack();
     }
