@@ -9,6 +9,7 @@ import ManageExpenseScreen from "./screens/ManageExpenseScreen";
 import { GlobalStyles } from "./constants/styles/GlobalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import IconButton from "./components/UI/IconButton";
+import ExpensesContextProvider from "./store/context/ExpensesContext";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -21,27 +22,38 @@ function ExpenseOverview() {
         headerTintColor: GlobalStyles.colors.white,
         tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
-        headerRight: ({ color }) => (<IconButton iconName='add' color={color} size={24} onPress={() => {
-          navigation.navigate('ManageExpenseScreen')
-        }} />)
+        headerRight: () => (
+          <IconButton
+            iconName="add"
+            color={GlobalStyles.colors.white}
+            size={24}
+            onPress={() => {
+              navigation.navigate("ManageExpenseScreen");
+            }}
+          />
+        ),
       })}
     >
       <BottomTabs.Screen
         name="RecentExpenseScreen"
         component={RecentExpensesScreen}
         options={{
-          title: 'Recent Expenses',
-          tabBarLabel: 'Recent',
-          tabBarIcon: ({ color, size }) => { return <Ionicons name="time" color={color} size={size} /> }
+          title: "Recent Expenses",
+          tabBarLabel: "Recent",
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="time" color={color} size={size} />;
+          },
         }}
       />
       <BottomTabs.Screen
         name="AllExpenseScreen"
         component={AllExpensesScreen}
         options={{
-          title: 'All Expenses',
-          tabBarLabel: 'All Expenses',
-          tabBarIcon: ({ color, size }) => { return <Ionicons name="cash" color={color} size={size} /> }
+          title: "All Expenses",
+          tabBarLabel: "All Expenses",
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="cash" color={color} size={size} />;
+          },
         }}
       />
     </BottomTabs.Navigator>
@@ -51,20 +63,30 @@ function ExpenseOverview() {
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="ExpenseOverViewScreen"
-            component={ExpenseOverview}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="ManageExpenseScreen"
-            component={ManageExpenseScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <StatusBar style="light" />
+      <ExpensesContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+              headerTintColor: GlobalStyles.colors.white,
+            }}
+          >
+            <Stack.Screen
+              name="ExpenseOverViewScreen"
+              component={ExpenseOverview}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ManageExpenseScreen"
+              component={ManageExpenseScreen}
+              options={{
+                presentation: "modal",
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ExpensesContextProvider>
     </>
   );
 }
